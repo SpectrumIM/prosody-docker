@@ -28,6 +28,7 @@ RUN apt-get update \
         ssl-cert \
         netcat \
         prosody \
+        prosody-modules \
     && rm -rf /var/lib/apt/lists/*
 
 # Configure prosody
