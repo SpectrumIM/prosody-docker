@@ -2,19 +2,17 @@
 # Build a dockerfile for Prosody XMPP server
 ################################################################################
 
-FROM debian:10
+FROM debian:bullseye-backports
 
-MAINTAINER Prosody Developers <developers@prosody.im>
+MAINTAINER Spectrum IM Developers <developers@spectrum.im>
 
 # Install dependencies
 RUN apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends -t bullseye-backports \
         lsb-base \
         procps \
         adduser \
         libidn11 \
-        libicu63 \
-        libssl1.1 \
         lua-bitop \
         lua-dbi-mysql \
         lua-dbi-postgresql \
@@ -25,17 +23,14 @@ RUN apt-get update \
         lua-sec \
         lua-socket \
         lua-zlib \
-        lua5.1 \
-        lua5.2 \
         openssl \
         ca-certificates \
         ssl-cert \
+        prosody \
     && rm -rf /var/lib/apt/lists/*
 
-# Install and configure prosody
-COPY ./prosody.deb /tmp/prosody.deb
-RUN dpkg -i /tmp/prosody.deb \
-    && sed -i '1s/^/daemonize = false;\n/' /etc/prosody/prosody.cfg.lua \
+# Configure prosody
+RUN sed -i '1s/^/daemonize = false;\n/' /etc/prosody/prosody.cfg.lua \
     && perl -i -pe 'BEGIN{undef $/;} s/^log = {.*?^}$/log = {\n    {levels = {min = "info"}, to = "console"};\n}/smg' /etc/prosody/prosody.cfg.lua
 
 RUN mkdir -p /var/run/prosody && chown prosody:prosody /var/run/prosody
