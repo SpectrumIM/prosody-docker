@@ -26,6 +26,7 @@ RUN apt-get update \
         openssl \
         ca-certificates \
         ssl-cert \
+        netcat \
         prosody \
     && rm -rf /var/lib/apt/lists/*
 
